@@ -6,7 +6,7 @@ import com.tradeprocessor.entity.TradeEntity;
 public class TradeEntityMapper {
   public static TradeEntity toEntity(Trade trade) {
     return new TradeEntity(trade.getTradeId(), trade.getQuantity(), trade.getPrice().amount(),
-        trade.getPrice().currency(), trade.getInstrumentDetails().instrumentType().name(),
+        trade.getPrice().currency(), trade.getInstrumentDetails().instrumentType(),
         trade.getTradeTime(), trade.getStatus());
   }
 }

@@ -1,0 +1,127 @@
+<div class="dashboard-grid">
+  
+  <!-- LEFT COLUMN: Trade Input Form -->
+  <div class="card form-card">
+    <h2>Evaluate New Trade</h2>
+    
+    <form [formGroup]="tradeForm" (ngSubmit)="onSubmit()" class="trade-form">
+      
+      <!-- Ticker Symbol & Asset Class -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="symbol">Ticker Symbol / ID</label>
+          <input 
+            id="symbol" 
+            type="text" 
+            formControlName="symbol" 
+            placeholder="e.g. AAPL, US10Y, CL" 
+            class="form-control" 
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="assetClass">Asset Class</label>
+          <select id="assetClass" formControlName="assetClass" class="form-control">
+            <option value="EQUITY">Equity</option>
+            <option value="FX">Foreign Exchange (FX)</option>
+            <option value="COMMODITY">Commodity</option>
+            <option value="FIXED_INCOME">Fixed Income</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Base Quantity & Price -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="quantity">Quantity / Units</label>
+          <input id="quantity" type="number" formControlName="quantity" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label for="price">Price (USD)</label>
+          <input id="price" type="number" step="0.01" formControlName="price" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Dynamic Fields: Foreign Exchange (FX) -->
+      <div *ngIf="tradeForm.get('assetClass')?.value === 'FX'" class="form-row dynamic-section">
+        <div class="form-group">
+          <label for="currencyPair">Currency Pair</label>
+          <select id="currencyPair" formControlName="currencyPair" class="form-control">
+            <option value="EUR/USD">EUR / USD</option>
+            <option value="GBP/USD">GBP / USD</option>
+            <option value="USD/JPY">USD / JPY</option>
+            <option value="USD/CHF">USD / CHF</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Dynamic Fields: Fixed Income -->
+      <div *ngIf="tradeForm.get('assetClass')?.value === 'FIXED_INCOME'" class="form-row dynamic-section">
+        <div class="form-group">
+          <label for="couponRate">Coupon Rate (%)</label>
+          <input id="couponRate" type="number" step="0.1" formControlName="couponRate" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="maturityDate">Maturity Date</label>
+          <input id="maturityDate" type="date" formControlName="maturityDate" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button type="submit" [disabled]="tradeForm.invalid || isLoading" class="btn-submit">
+        {{ isLoading ? 'Calculating Risk...' : 'Run Risk Evaluation' }}
+      </button>
+
+    </form>
+  </div>
+
+
+  <!-- RIGHT COLUMN: Risk Results & Analytics -->
+  <div class="card results-card">
+    <h2>Risk Model Breakdown</h2>
+
+    <!-- Your Chart Container (Chart.js / ngx-charts) -->
+    <div class="chart-container mb-6">
+      <canvas id="riskChart"></canvas>
+    </div>
+
+    <!-- 👇 THIS IS THE SECOND PART (TABLE) - PLACED DIRECTLY BELOW THE CHART -->
+    <div class="results-table-container" *ngIf="riskAssessment">
+      <table class="risk-table w-full border-collapse text-left">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-400">
+            <th class="py-2">Calculator / Model</th>
+            <th class="py-2">Score</th>
+            <th class="py-2">Breach Status</th>
+            <th class="py-2">Risk Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loops through array returned from Spring Boot / FastAPI -->
+          <tr *ngFor="let result of riskAssessment?.results" class="border-b border-slate-800">
+            <!-- Dynamically displays "Interest Rate Sensitivity (DV01)", "ZScore", etc. -->
+            <td class="py-3 font-semibold">{{ result.calculator_name }}</td>
+            <td class="py-3">{{ result.score | number:'1.2-4' }}</td>
+            <td class="py-3">
+              <span [class.breached-badge]="result.is_breached" [class.normal-badge]="!result.is_breached">
+                {{ result.is_breached ? 'BREACHED' : 'PASS' }}
+              </span>
+            </td>
+            <td class="py-3">
+              <span [ngClass]="{
+                'text-red-500 font-bold': result.risk_level === 'HIGH',
+                'text-amber-500 font-bold': result.risk_level === 'MEDIUM',
+                'text-emerald-500 font-bold': result.risk_level === 'LOW'
+              }">
+                {{ result.risk_level }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>

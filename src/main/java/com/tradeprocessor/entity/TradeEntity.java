@@ -2,6 +2,7 @@ package com.tradeprocessor.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.tradeprocessor.domain.InstrumentType;
 import com.tradeprocessor.domain.TradeStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +31,7 @@ public class TradeEntity {
   private BigDecimal priceAmount;
   private String priceCurrency;
   @Enumerated(EnumType.STRING)
-  private String instrumentType;
+  private InstrumentType instrumentType;
   private LocalDateTime tradeTime;
 
   @Enumerated(EnumType.STRING)
@@ -41,7 +42,7 @@ public class TradeEntity {
   protected TradeEntity() {} // required no-arg constructor for JPA
 
   public TradeEntity(String tradeId, BigDecimal quantity, BigDecimal priceAmount,
-      String priceCurrency, String instrumentType, LocalDateTime tradeTime,
+      String priceCurrency, InstrumentType instrumentType, LocalDateTime tradeTime,
       TradeStatus tradeStatus) {
     this.tradeId = tradeId;
     this.quantity = quantity;
