@@ -4,6 +4,7 @@ import {
   AfterViewInit,
   ViewChild,
   ElementRef,
+  ChangeDetectorRef,
   inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -35,6 +36,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
   private chartInstance: Chart | null = null;
   private fb = inject(FormBuilder);
   private riskService = inject(RiskService);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.tradeForm = this.fb.group({
@@ -84,9 +86,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
         console.log("5. Success! Backend data:", realBackendData);
         // Replace initial mock data with live response from Spring Boot / FastAPI
         this.riskAssessment = realBackendData;
-        this.renderChart();
         this.isLoading = false;
-        // this.cdr.detectChanges();
+        this.cdr.detectChanges();
         setTimeout(() => {
           this.renderChart();
         }, 0);
@@ -95,7 +96,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
         console.error("5. HTTP Error:", err);
         console.error("Error fetching live risk metrics from backend:", err);
         this.isLoading = false;
-        //this.cdr.detectChanges();
+        this.cdr.detectChanges();
       },
     });
   }
