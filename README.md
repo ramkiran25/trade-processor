@@ -82,18 +82,18 @@ The platform follows a decoupled, three-tier architecture ensuring high throughp
 
 ```mermaid
 flowchart TD
-    UI["🖥️ ANGULAR DASHBOARD<br/>• Dynamic Asset Forms (Equity, FX, Commodity, Fixed Income)<br/>• Real-time Analytics Charting & Visual Breach Indicators"]
+    UI["ANGULAR DASHBOARD<br/>Dynamic Asset Forms (Equity, FX, Commodity, Fixed Income)<br/>Real-time Analytics Charting and Visual Breach Indicators"]
 
-    GATEWAY["⚙️ SPRING BOOT API GATEWAY<br/>• Request Routing & Enterprise Orchestration<br/>• Financial Domain Validation & Payload Normalization"]
+    GATEWAY["SPRING BOOT API GATEWAY<br/>Request Routing and Enterprise Orchestration<br/>Financial Domain Validation and Payload Normalization"]
 
-    ENGINE["🐍 PYTHON FASTAPI RISK ENGINE<br/>• Strategy Pattern Engine with Dynamic Calculator Factory<br/>• Institutional Models (DV01, Basis Risk, Z-Score Anomaly)"]
+    ENGINE["PYTHON FASTAPI RISK ENGINE<br/>Strategy Pattern Engine with Dynamic Calculator Factory<br/>Institutional Models: DV01, Basis Risk, Z-Score Anomaly"]
 
     UI -->|"REST / JSON"| GATEWAY
     GATEWAY -->|"REST / JSON"| ENGINE
 
-    classDef default fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff;
-    classDef engine fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#fff;
-    class ENGINE engine;
+    classDef default fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff
+    classDef engine fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#fff
+    class ENGINE engine
 ```
 
 ### Request Flow
@@ -101,12 +101,12 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Client as Angular Dashboard
+    actor Client as "Angular Dashboard"
     participant Ctrl as TradeController
     participant Proc as TradeProcessor
     participant Val as TradeValidator
     participant Enr as InstrumentEnricher
-    participant Risk as RiskEngine (FastAPI)
+    participant Risk as "RiskEngine (FastAPI)"
     participant Fact as TradeCalculatorFactory
     participant Calc as TradeCalculator
     participant Repo as TradeRepository
@@ -162,38 +162,51 @@ classDiagram
         +calculateStatistics() Statistics
     }
 
-    class TradeValidator
-    <<interface>> TradeValidator
-    class InstrumentService
-    <<interface>> InstrumentService
-    class TradeCalculator
-    <<interface>> TradeCalculator
-    class RiskEngine
-    <<interface>> RiskEngine
-    class RiskCalculator
-    <<interface>> RiskCalculator
-    class TradeRepository
-    <<interface>> TradeRepository
+    class TradeValidator {
+        <<interface>>
+    }
+    class InstrumentService {
+        <<interface>>
+    }
+    class TradeCalculator {
+        <<interface>>
+    }
+    class RiskEngine {
+        <<interface>>
+    }
+    class RiskCalculator {
+        <<interface>>
+    }
+    class TradeRepository {
+        <<interface>>
+    }
 
     class DefaultTradeValidator
     class DefaultInstrumentService
     class EquityTradeCalculator
     class ZScoreCalculator
 
-    class Trade
-    <<domain>> Trade
-    class EnrichedTrade
-    <<domain>> EnrichedTrade
-    class RiskAssessment
-    <<domain>> RiskAssessment
-    class RiskResult
-    <<domain>> RiskResult
-    class TradeCalculation
-    <<domain>> TradeCalculation
-    class TradeProcessingResult
-    <<domain>> TradeProcessingResult
-    class ErrorResponse
-    <<domain>> ErrorResponse
+    class Trade {
+        <<domain>>
+    }
+    class EnrichedTrade {
+        <<domain>>
+    }
+    class RiskAssessment {
+        <<domain>>
+    }
+    class RiskResult {
+        <<domain>>
+    }
+    class TradeCalculation {
+        <<domain>>
+    }
+    class TradeProcessingResult {
+        <<domain>>
+    }
+    class ErrorResponse {
+        <<domain>>
+    }
 
     TradeController --> TradeProcessor
     TradeProcessor --> TradeValidator
@@ -220,35 +233,35 @@ classDiagram
     DefaultRiskEngine ..> RiskAssessment
     RiskAssessment o-- RiskResult
 
-    classDef controller fill:#4C6EF5,stroke:#364FC7,color:#fff,font-weight:bold;
-    classDef orchestration fill:#12B886,stroke:#0B7285,color:#fff,font-weight:bold;
-    classDef contract fill:#FAB005,stroke:#E67700,color:#000,font-weight:bold;
-    classDef impl fill:#FD7E14,stroke:#D9480F,color:#fff,font-weight:bold;
-    classDef domain fill:#845EF7,stroke:#5F3DC4,color:#fff,font-weight:bold;
+    classDef controller fill:#4C6EF5,stroke:#364FC7,color:#fff,font-weight:bold
+    classDef orchestration fill:#12B886,stroke:#0B7285,color:#fff,font-weight:bold
+    classDef contract fill:#FAB005,stroke:#E67700,color:#000,font-weight:bold
+    classDef impl fill:#FD7E14,stroke:#D9480F,color:#fff,font-weight:bold
+    classDef domain fill:#845EF7,stroke:#5F3DC4,color:#fff,font-weight:bold
 
-    class TradeController controller
-    class TradeProcessor orchestration
-    class InstrumentEnricher orchestration
-    class TradeCalculatorFactory orchestration
-    class DefaultRiskEngine orchestration
-    class TradeStatisticsService orchestration
-    class TradeValidator contract
-    class InstrumentService contract
-    class TradeCalculator contract
-    class RiskEngine contract
-    class RiskCalculator contract
-    class TradeRepository contract
-    class DefaultTradeValidator impl
-    class DefaultInstrumentService impl
-    class EquityTradeCalculator impl
-    class ZScoreCalculator impl
-    class Trade domain
-    class EnrichedTrade domain
-    class RiskAssessment domain
-    class RiskResult domain
-    class TradeCalculation domain
-    class TradeProcessingResult domain
-    class ErrorResponse domain
+    class TradeController:::controller
+    class TradeProcessor:::orchestration
+    class InstrumentEnricher:::orchestration
+    class TradeCalculatorFactory:::orchestration
+    class DefaultRiskEngine:::orchestration
+    class TradeStatisticsService:::orchestration
+    class TradeValidator:::contract
+    class InstrumentService:::contract
+    class TradeCalculator:::contract
+    class RiskEngine:::contract
+    class RiskCalculator:::contract
+    class TradeRepository:::contract
+    class DefaultTradeValidator:::impl
+    class DefaultInstrumentService:::impl
+    class EquityTradeCalculator:::impl
+    class ZScoreCalculator:::impl
+    class Trade:::domain
+    class EnrichedTrade:::domain
+    class RiskAssessment:::domain
+    class RiskResult:::domain
+    class TradeCalculation:::domain
+    class TradeProcessingResult:::domain
+    class ErrorResponse:::domain
 ```
 
 ---
