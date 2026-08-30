@@ -1,41 +1,77 @@
-# Trade Processor
+# 🚀 Enterprise Multi-Asset Risk Intelligence Platform
 
-A Spring Boot service that validates, enriches, risk-assesses, and persists financial
-trades — built as a hands-on exercise in layered architecture, the Strategy/Factory
-patterns, and production-grade Spring practices (JPA persistence, centralized exception
-handling, OpenAPI docs, automated testing).
+A high-performance, real-time quantitative risk assessment platform designed for modern trading environments. Built using a modular full-stack architecture (**Angular UI**, **Spring Boot API Gateway**, and **Python FastAPI Risk Engine**), it dynamically validates, enriches, computes, and visualizes asset-specific risk metrics across global asset classes.
 
-## Features
+---
 
-- **Trade intake and validation** via `POST /trade/create`
-- **Instrument enrichment** — augments incoming trades with reference data (instrument type)
-- **Z-score based risk assessment** — flags anomalous trades against the historical
-  notional distribution before they're processed
-- **Pluggable notional calculation** per instrument type (Strategy pattern; currently
-  `EQUITY`, extensible to FX/bond/derivative)
-- **Centralized error handling** — malformed requests, validation failures, and
-  unsupported instruments all return structured, typed error responses
-- **Dummy data seeding** on startup for local testing of the risk engine
-- **Swagger / OpenAPI UI** for interactive API testing
-- **H2 in-memory database** for zero-setup local development
+## 📸 Dashboard Preview
 
-## Tech stack
+![Enterprise Risk Intelligence Dashboard](assets/architecture-diagram.png)
 
-| Layer | Technology |
-|---|---|
-| Language | Java 17 |
-| Framework | Spring Boot 4 (Spring MVC, Spring Data JPA) |
-| Database | H2 (in-memory) |
-| API docs | springdoc-openapi (Swagger UI) |
-| Testing | JUnit 5, Mockito |
-| Build | Maven |
+---
 
-## Architecture
+## 🏗️ System Architecture
 
-The service follows a layered architecture: controllers stay thin, a processor
-orchestrates the workflow, and instrument-specific or risk-specific logic is isolated
-behind Strategy interfaces so new instrument types or risk checks can be added without
-touching existing code.
+The platform follows a decoupled, three-tier architecture ensuring high throughput, clear separation of concerns, and seamless scalability for adding new quantitative risk models.
+
+```mermaid
+flowchart TD
+    UI["🖥️ ANGULAR DASHBOARD<br/>• Dynamic Asset Forms (Equity, FX, Commodity, Fixed Income)<br/>• Real-time Analytics Charting & Visual Breach Indicators"]
+
+    GATEWAY["⚙️ SPRING BOOT API GATEWAY<br/>• Request Routing & Enterprise Orchestration<br/>• Financial Domain Validation & Payload Normalization"]
+
+    ENGINE["🐍 PYTHON FASTAPI RISK ENGINE<br/>• Strategy Pattern Engine with Dynamic Calculator Factory<br/>• Institutional Models (DV01, Basis Risk, Z-Score Anomaly)"]
+
+    UI -->|"REST / JSON"| GATEWAY
+    GATEWAY -->|"REST / JSON"| ENGINE
+
+    classDef default fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff;
+    classDef engine fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#fff;
+    class ENGINE engine;
+```
+
+### Request Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Angular Dashboard
+    participant Ctrl as TradeController
+    participant Proc as TradeProcessor
+    participant Val as TradeValidator
+    participant Enr as InstrumentEnricher
+    participant Risk as RiskEngine (FastAPI)
+    participant Fact as TradeCalculatorFactory
+    participant Calc as TradeCalculator
+    participant Repo as TradeRepository
+
+    Client->>+Ctrl: POST /trade/create
+    Ctrl->>+Proc: process(trade)
+    Proc->>+Val: validateTrade(trade)
+    Val-->>-Proc: ok / throws
+    Proc->>+Enr: enrich(trade)
+    Enr-->>-Proc: EnrichedTrade
+    Proc->>+Risk: assessTrade(trade)
+    Risk-->>-Proc: RiskAssessment
+
+    alt Anomaly / Breach Detected
+        Proc->>Proc: trade.markRejected()
+        Proc->>Repo: save(trade)
+        Proc-->>Ctrl: REJECTED result
+    else Normal Risk Assessment
+        Proc->>+Fact: getCalculator(instrumentType)
+        Fact-->>-Proc: TradeCalculator
+        Proc->>+Calc: calculate(enrichedTrade)
+        Calc-->>-Proc: TradeCalculation
+        Proc->>Proc: trade.markProcessed()
+        Proc->>+Repo: save(trade)
+        Repo-->>-Proc: persisted
+        Proc-->>Ctrl: PROCESSED result
+    end
+    Ctrl-->>-Client: 200 OK
+```
+
+### Class Structure
 
 ```mermaid
 classDiagram
@@ -125,25 +161,21 @@ classDiagram
     classDef domain fill:#845EF7,stroke:#5F3DC4,color:#fff,font-weight:bold;
 
     class TradeController controller
-
     class TradeProcessor orchestration
     class InstrumentEnricher orchestration
     class TradeCalculatorFactory orchestration
     class DefaultRiskEngine orchestration
     class TradeStatisticsService orchestration
-
     class TradeValidator contract
     class InstrumentService contract
     class TradeCalculator contract
     class RiskEngine contract
     class RiskCalculator contract
     class TradeRepository contract
-
     class DefaultTradeValidator impl
     class DefaultInstrumentService impl
     class EquityTradeCalculator impl
     class ZScoreCalculator impl
-
     class Trade domain
     class EnrichedTrade domain
     class RiskAssessment domain
@@ -153,122 +185,48 @@ classDiagram
     class ErrorResponse domain
 ```
 
-**Legend:** blue = controller · green = orchestration · amber = contracts (interfaces) · orange = implementations · purple = domain model
+---
 
-## Request flow
+## 💻 Local Development Setup
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client
-    participant Ctrl as TradeController
-    participant Proc as TradeProcessor
-    participant Val as TradeValidator
-    participant Enr as InstrumentEnricher
-    participant Risk as RiskEngine
-    participant Fact as TradeCalculatorFactory
-    participant Calc as TradeCalculator
-    participant Repo as TradeRepository
-
-    Client->>+Ctrl: POST /trade/create
-    Ctrl->>+Proc: process(trade)
-    Proc->>+Val: validateTrade(trade)
-    Val-->>-Proc: ok / throws
-    Proc->>+Enr: enrich(trade)
-    Enr-->>-Proc: EnrichedTrade
-    Proc->>+Risk: assessTrade(trade)
-    Risk-->>-Proc: RiskAssessment
-
-    alt anomaly detected
-        Proc->>Proc: trade.markRejected()
-        Proc->>Repo: save(trade)
-        Proc-->>Ctrl: REJECTED result
-    else no anomaly
-        Proc->>+Fact: getCalculator(instrumentType)
-        Fact-->>-Proc: TradeCalculator
-        Proc->>+Calc: calculate(enrichedTrade)
-        Calc-->>-Proc: TradeCalculation
-        Proc->>Proc: trade.markProcessed()
-        Proc->>+Repo: save(trade)
-        Repo-->>-Proc: persisted
-        Proc-->>Ctrl: PROCESSED result
-    end
-    Ctrl-->>-Client: 200 OK
-```
-
-## Design patterns used
-
-| Pattern | Where | Purpose |
-|---|---|---|
-| Strategy | `TradeCalculator`, `RiskCalculator` | Swap notional/risk logic per instrument type or risk model without touching the orchestrator |
-| Factory | `TradeCalculatorFactory` | Resolves the correct `TradeCalculator` at runtime |
-| Facade / Orchestrator | `TradeProcessor` | Coordinates validation, enrichment, risk check, calculation, and persistence |
-| Repository | `TradeRepository` (Spring Data JPA) | Abstracts persistence for `TradeEntity` |
-| DTO / value object (records) | `Money`, `EnrichedTrade`, `TradeCalculation`, `TradeProcessingResult`, `RiskAssessment` | Immutable data carriers between layers |
-| Centralized exception handling | `TradeExceptionHandler` (`@RestControllerAdvice`) | Maps domain exceptions to typed HTTP error responses |
-
-## Getting started
-
-### Prerequisites
-- Java 17+
-- Maven 3.9+
-
-### Run locally
+### 1. Clone Repository
 
 ```bash
-mvn spring-boot:run
+git clone https://github.com/ramkiran25/trade-processor.git
+cd trade-processor
 ```
 
-The app starts on `http://localhost:8080` and seeds a dummy trade dataset on startup
-(see `DummyTradeDataSeeder`) so the risk engine has a real distribution to score
-against immediately.
-
-### API docs
-
-Once running:
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- OpenAPI spec: `http://localhost:8080/v3/api-docs`
-
-### H2 console
-
-`http://localhost:8080/h2-console` — use the JDBC URL from `application.properties`
-(`spring.datasource.url`) exactly as configured, or the console connects to a separate,
-empty in-memory instance.
-
-### Example request
+### 2. Python Risk Engine
 
 ```bash
-curl -X POST http://localhost:8080/trade/create \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "tradeId": "abc123",
-    "quantity": 40,
-    "price": { "amount": 100, "currency": "EUR" },
-    "instrumentDetails": { "instrumentType": "EQUITY" },
-    "tradeTime": "2026-08-25T23:07:16.789",
-    "trader": { "name": "Peter" },
-    "tradeStatus": "RECEIVED"
-  }'
+cd python-service
+python -m venv venv
+# On Windows: venv\Scripts\activate | On macOS/Linux: source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 ```
 
-### Tests
+### 3. Spring Boot Gateway
 
 ```bash
-mvn test
+cd ../backend-service
+./mvnw spring-boot:run
 ```
 
-Unit tests cover `TradeProcessor` (happy path and risk-rejection path),
-`TradeStatisticsService` (mean/variance correctness), `ZScoreCalculator` (risk tier
-thresholds), and `EquityTradeCalculator` (notional calculation).
+### 4. Angular Dashboard
 
-## Known limitations / roadmap
+```bash
+cd ../angular-frontend
+npm install
+ng serve --open
+```
 
-- Only `EQUITY` has a registered `TradeCalculator` — FX, bond, and derivative trades
-  currently return a 422 (`UnsupportedInstrumentException`).
-- `DefaultTradeValidator` and `DefaultInstrumentService` are functional stubs, not
-  real validation/lookup logic — fine for local testing, not production-ready.
-- `TradeStatisticsService` recomputes mean/variance from the full trade history on
-  every request — fine at small scale, would need an incremental/running-statistics
-  approach (e.g. Welford's algorithm) at production volume.
-- Risk baseline currently includes all trades regardless of status; filtering to
-  `PROCESSED`-only trades would prevent rejected outliers from skewing future scores.
+---
+
+## 🔗 API & Local Endpoints
+
+Once the application services are running locally:
+
+- **Swagger UI:** http://localhost:8080/swagger-ui.html
+- **OpenAPI Spec:** http://localhost:8080/v3/api-docs
+- **H2 Console:** http://localhost:8080/h2-console (JDBC URL configured in `application.properties`)
