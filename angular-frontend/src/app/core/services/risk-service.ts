@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, timeout, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { RiskAssessment } from "../models";
 export interface TradeEvaluationRequest {
   symbol: string;
@@ -25,6 +26,13 @@ export class RiskService {
       assetClass: formValues.assetClass,
     };
 
-    return this.http.post<RiskAssessment>(this.apiUrl, payload);
+    return this.http.post<RiskAssessment>(this.apiUrl, payload).pipe(
+      timeout(15000),
+      catchError((err) => {
+        console.error("Risk evaluation request failed or timed out:", err);
+        return throwError(() => err);
+      }),
+    );
   }
 }
+

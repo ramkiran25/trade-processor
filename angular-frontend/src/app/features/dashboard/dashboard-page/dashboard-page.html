@@ -1,21 +1,21 @@
 <div class="dashboard-grid">
-  
+
   <!-- LEFT COLUMN: Trade Input Form -->
   <div class="card form-card">
     <h2>Evaluate New Trade</h2>
-    
+
     <form [formGroup]="tradeForm" (ngSubmit)="onSubmit()" class="trade-form">
-      
+
       <!-- Ticker Symbol & Asset Class -->
       <div class="form-row">
         <div class="form-group">
           <label for="symbol">Ticker Symbol / ID</label>
-          <input 
-            id="symbol" 
-            type="text" 
-            formControlName="symbol" 
-            placeholder="e.g. AAPL, US10Y, CL" 
-            class="form-control" 
+          <input
+            id="symbol"
+            type="text"
+            formControlName="symbol"
+            placeholder="e.g. AAPL, US10Y, CL"
+            class="form-control"
           />
         </div>
 
@@ -81,39 +81,33 @@
   <div class="card results-card">
     <h2>Risk Model Breakdown</h2>
 
-    <!-- Your Chart Container (Chart.js / ngx-charts) -->
-    <div class="chart-container mb-6">
-      <canvas id="riskChart"></canvas>
+    <!-- Chart Container (Chart.js) -->
+    <div class="chart-wrapper">
+      <canvas #riskChart></canvas>
     </div>
 
-    <!-- 👇 THIS IS THE SECOND PART (TABLE) - PLACED DIRECTLY BELOW THE CHART -->
+    <!-- Results Table -->
     <div class="results-table-container" *ngIf="riskAssessment">
-      <table class="risk-table w-full border-collapse text-left">
+      <table class="results-table">
         <thead>
-          <tr class="border-b border-slate-700 text-slate-400">
-            <th class="py-2">Calculator / Model</th>
-            <th class="py-2">Score</th>
-            <th class="py-2">Breach Status</th>
-            <th class="py-2">Risk Level</th>
+          <tr>
+            <th>Calculator / Model</th>
+            <th>Score</th>
+            <th>Breach Status</th>
+            <th>Risk Level</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Loops through array returned from Spring Boot / FastAPI -->
-          <tr *ngFor="let result of riskAssessment?.results" class="border-b border-slate-800">
-            <!-- Dynamically displays "Interest Rate Sensitivity (DV01)", "ZScore", etc. -->
-            <td class="py-3 font-semibold">{{ result.calculator_name }}</td>
-            <td class="py-3">{{ result.score | number:'1.2-4' }}</td>
-            <td class="py-3">
-              <span [class.breached-badge]="result.is_breached" [class.normal-badge]="!result.is_breached">
+          <tr *ngFor="let result of riskAssessment?.results">
+            <td class="font-medium">{{ result.calculator_name }}</td>
+            <td>{{ result.score | number:'1.2-4' }}</td>
+            <td>
+              <span class="pill" [class.pill-danger]="result.is_breached" [class.pill-success]="!result.is_breached">
                 {{ result.is_breached ? 'BREACHED' : 'PASS' }}
               </span>
             </td>
-            <td class="py-3">
-              <span [ngClass]="{
-                'text-red-500 font-bold': result.risk_level === 'HIGH',
-                'text-amber-500 font-bold': result.risk_level === 'MEDIUM',
-                'text-emerald-500 font-bold': result.risk_level === 'LOW'
-              }">
+            <td>
+              <span class="level-tag" [attr.data-level]="result.risk_level">
                 {{ result.risk_level }}
               </span>
             </td>

@@ -166,6 +166,12 @@ export class DashboardPage implements OnInit, AfterViewInit {
       return "rgba(16, 185, 129, 0.85)";
     });
 
+    const borderColors = this.riskAssessment.results.map((r) => {
+      if (r.risk_level === "HIGH") return "#ef4444";
+      if (r.risk_level === "MEDIUM") return "#f59e0b";
+      return "#10b981";
+    });
+
     this.chartInstance = new Chart(ctx, {
       type: "bar",
       data: {
