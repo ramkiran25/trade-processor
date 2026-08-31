@@ -1,8 +1,8 @@
 package com.tradeprocessor.risk;
 
-import com.tradeprocessor.domain.RiskAssessment;
-import com.tradeprocessor.domain.Trade;
+import com.tradeprocessor.domain.EnrichedTrade;
+import com.tradeprocessor.domain.RiskAssessmentDto;
 
 public interface RiskEngine {
-   RiskAssessment assessTrade(Trade trade);
+  RiskAssessmentDto assessTrade(EnrichedTrade enrichedTrade);
 }

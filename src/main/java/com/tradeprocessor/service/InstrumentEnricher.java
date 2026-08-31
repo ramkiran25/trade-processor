@@ -12,7 +12,7 @@ public class InstrumentEnricher {
   private final InstrumentService instrumentService;
 
   public EnrichedTrade enrich(Trade trade) {
-    InstrumentDetails instrumentDetails = instrumentService.getInstrument(trade.getTradeId());
+    InstrumentDetails instrumentDetails = instrumentService.getInstrument(trade.getSymbol());
     return new EnrichedTrade(trade,instrumentDetails);
   }
 }

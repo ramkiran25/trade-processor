@@ -1,32 +1,31 @@
 package com.tradeprocessor.controller;
 
-import com.tradeprocessor.domain.RiskAssessmentDto;
-import com.tradeprocessor.domain.TradeDto;
 import com.tradeprocessor.domain.TradeEvaluationRequestDto;
-import com.tradeprocessor.service.RiskAssessmentService;
+import com.tradeprocessor.service.TradeProcessingResult;
+import com.tradeprocessor.service.TradeProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/risk")
-@CrossOrigin(origins = "http://localhost:4200") // Prevents CORS errors in dev
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class TradeController {
 
-    private final RiskAssessmentService riskService;
+  private final TradeProcessor tradeProcessor;
 
-    @PostMapping("/evaluate")
-    public ResponseEntity<RiskAssessmentDto> evaluateTrade(@RequestBody TradeEvaluationRequestDto request) {
-        System.out.println(">>> Received request from Angular for symbol: " + request.symbol());
-        
-        // 1. Convert flat HTTP request -> domain TradeDto
-        TradeDto trade = request.toTradeDto();
-        
-        // 2. Pass domain object to FastAPI calculation engine
-        RiskAssessmentDto assessment = riskService.evaluateTrade(trade);
-        
-        // 3. Return results back to Angular
-        return ResponseEntity.ok(assessment);
-    }
+  @PostMapping("/evaluate")
+  public ResponseEntity<TradeProcessingResult> evaluateTrade(
+      @RequestBody TradeEvaluationRequestDto request) {
+    log.info(">>> Received request from Angular for symbol: {}", request.symbol());
+
+    var trade = request.toTradeDomain();
+
+    TradeProcessingResult result = tradeProcessor.process(trade);
+    log.info("Result from  ML code:", result);
+    return ResponseEntity.ok(result);
+  }
 }

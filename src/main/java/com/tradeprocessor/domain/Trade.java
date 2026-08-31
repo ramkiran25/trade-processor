@@ -14,7 +14,7 @@ public class Trade {
   private InstrumentDetails instrumentDetails;
   private LocalDateTime tradeTime;
   private TradeStatus status;
-
+  private String symbol;
   public void markProcessed() {
     this.status = TradeStatus.PROCESSED;
   }

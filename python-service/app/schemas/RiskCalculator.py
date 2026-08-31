@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from app.schemas.trade import Trade
 
 
-# Abstract class (like Java interface)
+# Abstract class 
 class RiskCalculator(ABC):
 
     @abstractmethod
@@ -11,7 +11,7 @@ class RiskCalculator(ABC):
         pass
 
 
-# Concrete Implementation (Inheritance)
+# Concrete Implementation
 class ZScoreCalculator(RiskCalculator):
 
     def calculate(self, trade: Trade) -> float:
