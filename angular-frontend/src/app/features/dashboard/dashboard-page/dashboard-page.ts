@@ -208,7 +208,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
                 return [
                   ` Risk Level: ${item.risk_level}`,
                   ` Score: ${formattedScore}`,
-                  ` Limit Breached: ${item.is_breached ? 'YES ⚠️' : 'NO ✅'}`,
+                  ` Limit Breached: ${item.is_breached ? 'YES' : 'NO'}`,
                 ];
               },
             },
