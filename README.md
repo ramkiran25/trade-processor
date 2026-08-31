@@ -10,6 +10,7 @@ A real-time quantitative risk engine built around a **Python risk core** (FastAP
 ![Commodity Analytics View](assets/commodity.png)
 ![Commodity Stress Test View](assets/commodity10.png)
 ![Fixed Income Risk View](assets/fixedIncome.png)
+![Fixed Income Risk View2](assets/updated-equity.png)
 
 ---
 
