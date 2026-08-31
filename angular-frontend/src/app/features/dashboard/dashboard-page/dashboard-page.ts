@@ -72,9 +72,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
         console.log('5. Success! Backend data:', response);
         // Replace initial mock data with live response from Spring Boot / FastAPI
         this.riskAssessment = response.riskAssessmentDto;
-        this.renderChart();
         this.isLoading = false;
-        // this.cdr.detectChanges();
+
         setTimeout(() => {
           this.renderChart();
         }, 0);
@@ -83,7 +82,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
         console.error('5. HTTP Error:', err);
         console.error('Error fetching live risk metrics from backend:', err);
         this.isLoading = false;
-        //this.cdr.detectChanges();
       },
     });
   }
@@ -188,10 +186,30 @@ export class DashboardPage implements OnInit, AfterViewInit {
         plugins: {
           legend: { display: false },
           tooltip: {
+            padding: 12,
+            displayColors: false,
             callbacks: {
+              title: (tooltipItems) => {
+                const index = tooltipItems[0].dataIndex;
+                const item = this.riskAssessment?.results[index];
+                return item ? `Calculator: ${item.calculator_name}` : '';
+              },
               label: (context) => {
-                const val = context.raw;
-                return val === 3 ? ' HIGH RISK' : val === 2 ? ' MEDIUM RISK' : ' LOW RISK';
+                const index = context.dataIndex;
+                const item = this.riskAssessment?.results[index];
+
+                if (!item) return '';
+
+                const formattedScore =
+                  typeof item.score === 'number'
+                    ? item.score.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                    : item.score;
+
+                return [
+                  ` Risk Level: ${item.risk_level}`,
+                  ` Score: ${formattedScore}`,
+                  ` Limit Breached: ${item.is_breached ? 'YES ⚠️' : 'NO ✅'}`,
+                ];
               },
             },
           },

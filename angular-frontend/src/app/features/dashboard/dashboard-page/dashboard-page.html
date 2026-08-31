@@ -15,13 +15,13 @@
             type="text"
             formControlName="symbol"
             placeholder="e.g. AAPL, US10Y, CL"
-            class="form-control"
-          />
+            class="form-control" />
         </div>
 
         <div class="form-group">
           <label for="assetClass">Asset Class</label>
-          <select id="assetClass" formControlName="assetClass" class="form-control">
+          <select id="assetClass" formControlName="assetClass"
+            class="form-control">
             <option value="EQUITY">Equity</option>
             <option value="FX">Foreign Exchange (FX)</option>
             <option value="COMMODITY">Commodity</option>
@@ -34,20 +34,25 @@
       <div class="form-row">
         <div class="form-group">
           <label for="quantity">Quantity / Units</label>
-          <input id="quantity" type="number" formControlName="quantity" class="form-control" />
+          <input id="quantity" type="number" formControlName="quantity"
+            class="form-control" />
         </div>
 
         <div class="form-group">
           <label for="price">Price (USD)</label>
-          <input id="price" type="number" step="0.01" formControlName="price" class="form-control" />
+          <input id="price" type="number" step="0.01" formControlName="price"
+            class="form-control" />
         </div>
       </div>
 
-      <!-- Dynamic Fields: Foreign Exchange (FX) -->
-      <div *ngIf="tradeForm.get('assetClass')?.value === 'FX'" class="form-row dynamic-section">
+      <!-- Dynamic Fields -->
+      @switch (tradeForm.get('assetClass')?.value) {
+      @case ('FX') {
+      <div class="form-row dynamic-section">
         <div class="form-group">
           <label for="currencyPair">Currency Pair</label>
-          <select id="currencyPair" formControlName="currencyPair" class="form-control">
+          <select id="currencyPair" formControlName="currencyPair"
+            class="form-control">
             <option value="EUR/USD">EUR / USD</option>
             <option value="GBP/USD">GBP / USD</option>
             <option value="USD/JPY">USD / JPY</option>
@@ -55,27 +60,31 @@
           </select>
         </div>
       </div>
-
-      <!-- Dynamic Fields: Fixed Income -->
-      <div *ngIf="tradeForm.get('assetClass')?.value === 'FIXED_INCOME'" class="form-row dynamic-section">
+      }
+      @case ('FIXED_INCOME') {
+      <div class="form-row dynamic-section">
         <div class="form-group">
           <label for="couponRate">Coupon Rate (%)</label>
-          <input id="couponRate" type="number" step="0.1" formControlName="couponRate" class="form-control" />
+          <input id="couponRate" type="number" step="0.1"
+            formControlName="couponRate" class="form-control" />
         </div>
         <div class="form-group">
           <label for="maturityDate">Maturity Date</label>
-          <input id="maturityDate" type="date" formControlName="maturityDate" class="form-control" />
+          <input id="maturityDate" type="date" formControlName="maturityDate"
+            class="form-control" />
         </div>
       </div>
+      }
+      }
 
       <!-- Action Button -->
-      <button type="submit" [disabled]="tradeForm.invalid || isLoading" class="btn-submit">
+      <button type="submit" [disabled]="tradeForm.invalid || isLoading"
+        class="btn-submit">
         {{ isLoading ? 'Calculating Risk...' : 'Run Risk Evaluation' }}
       </button>
 
     </form>
   </div>
-
 
   <!-- RIGHT COLUMN: Risk Results & Analytics -->
   <div class="card results-card">
@@ -87,7 +96,8 @@
     </div>
 
     <!-- Results Table -->
-    <div class="results-table-container" *ngIf="riskAssessment">
+    @if (riskAssessment) {
+    <div class="results-table-container">
       <table class="results-table">
         <thead>
           <tr>
@@ -98,11 +108,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let result of riskAssessment?.results">
+          @for (result of riskAssessment.results; track result.calculator_name)
+          {
+          <tr>
             <td class="font-medium">{{ result.calculator_name }}</td>
             <td>{{ result.score | number:'1.2-4' }}</td>
             <td>
-              <span class="pill" [class.pill-danger]="result.is_breached" [class.pill-success]="!result.is_breached">
+              <span class="pill" [class.pill-danger]="result.is_breached"
+                [class.pill-success]="!result.is_breached">
                 {{ result.is_breached ? 'BREACHED' : 'PASS' }}
               </span>
             </td>
@@ -112,9 +125,11 @@
               </span>
             </td>
           </tr>
+          }
         </tbody>
       </table>
     </div>
+    }
 
   </div>
 
