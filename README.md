@@ -6,8 +6,6 @@ A real-time quantitative risk engine built around a **Python risk core** (FastAP
 
 ## 📸 Dashboard Preview
 
-## 📸 Dashboard Preview
-
 ![Architecture Diagram](assets/architecture-diagram.png)
 ![Commodity Analytics View](assets/commodity.png)
 ![Commodity Stress Test View](assets/commodity10.png)
