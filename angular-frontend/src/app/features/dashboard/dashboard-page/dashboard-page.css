@@ -77,6 +77,9 @@
   display: grid;
   grid-template-columns: 360px 1fr;
   gap: 1.5rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .card {
@@ -86,10 +89,11 @@
   padding: 1.5rem;
 }
 
-.card h3 {
+.card h2 {
   margin-top: 0;
   margin-bottom: 1.25rem;
   font-size: 1.1rem;
+  font-weight: 600;
   color: #e2e8f0;
 }
 
@@ -152,6 +156,48 @@ select:focus {
 .btn-submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* --- Chart Header & Toggle --- */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.results-header h2 {
+  margin: 0;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.25rem;
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.view-toggle button {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.view-toggle button:hover {
+  color: #e2e8f0;
+}
+
+.view-toggle button.active {
+  background-color: #0284c7;
+  color: #ffffff;
 }
 
 /* --- Explicit Chart Dimensions --- */

@@ -88,7 +88,17 @@
 
   <!-- RIGHT COLUMN: Risk Results & Analytics -->
   <div class="card results-card">
-    <h2>Risk Model Breakdown</h2>
+    <div class="results-header">
+      <h2>Risk Model Breakdown</h2>
+      <div class="view-toggle">
+        <button type="button"
+          [class.active]="chartType === 'bar'"
+          (click)="setChartType('bar')">Bar</button>
+        <button type="button"
+          [class.active]="chartType === 'line'"
+          (click)="setChartType('line')">Curve</button>
+      </div>
+    </div>
 
     <!-- Chart Container (Chart.js) -->
     <div class="chart-wrapper">

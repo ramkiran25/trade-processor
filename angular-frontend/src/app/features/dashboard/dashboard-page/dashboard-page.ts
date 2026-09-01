@@ -19,6 +19,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
   tradeForm!: FormGroup;
   riskAssessment: RiskAssessment | null = null;
   isLoading = false;
+  chartType: 'bar' | 'line' = 'bar';
 
   private chartInstance: Chart | null = null;
   private fb = inject(FormBuilder);
@@ -98,6 +99,12 @@ export class DashboardPage implements OnInit, AfterViewInit {
     return hasBreach ? 'status-danger' : 'status-success';
   }
 
+  setChartType(type: 'bar' | 'line'): void {
+    if (this.chartType === type) return;
+    this.chartType = type;
+    this.renderChart();
+  }
+
   /**
    * Default baseline mock dataset displayed before any user interaction
    */
@@ -163,20 +170,28 @@ export class DashboardPage implements OnInit, AfterViewInit {
       return '#10b981';
     });
 
+    const isLine = this.chartType === 'line';
+
     this.chartInstance = new Chart(ctx, {
-      type: 'bar',
+      type: this.chartType,
       data: {
         labels: labels,
         datasets: [
           {
             label: 'Severity',
             data: data,
-            backgroundColor: bgColors,
-            borderRadius: 6,
+            backgroundColor: isLine ? 'rgba(56, 189, 248, 0.15)' : bgColors,
+            borderColor: isLine ? '#38bdf8' : borderColors,
+            borderWidth: isLine ? 2 : 1.5,
+            borderRadius: isLine ? 0 : 6,
             barPercentage: 0.6,
-            borderWidth: 1.5,
-            borderColor: borderColors,
             maxBarThickness: 50,
+            tension: isLine ? 0.4 : 0,
+            fill: isLine,
+            pointRadius: isLine ? 4 : 0,
+            pointBackgroundColor: isLine ? borderColors : undefined,
+            pointBorderColor: isLine ? '#0b0f19' : undefined,
+            pointBorderWidth: isLine ? 2 : 0,
           },
         ],
       },

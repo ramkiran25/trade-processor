@@ -11,11 +11,16 @@ A real-time quantitative risk engine built around a **Python risk core** (FastAP
   <br/><br/>
   <img src="assets/commodity.png" style="max-width:100%; height:auto;" alt="Commodity Analytics View" />
   <br/><br/>
+  
   <img src="assets/commodity10.png" style="max-width:100%; height:auto;" alt="Commodity Stress Test View" />
   <br/><br/>
+  
   <img src="assets/fixedIncome.png" style="max-width:100%; height:auto;" alt="Fixed Income Risk View" />
   <br/><br/>
+  
  <img src="assets/updated-equity.png" width="100%" style="image-rendering: crisp-edges; image-rendering: -webkit-optimize-contrast;" alt="Equity Risk View" />
+ <br/><br/>
+ <img src="assets/curve.png" width="100%" style="image-rendering: crisp-edges; image-rendering: -webkit-optimize-contrast;" alt="Equity Risk View Curve" />
 </div>
 
 ---
